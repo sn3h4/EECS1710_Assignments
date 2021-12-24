@@ -12,7 +12,7 @@ void setup() {
 
   for (int x = 0; x < img.width; x += scaler) {
     for (int y = 0; y < img.height; y += scaler) {
-      // this translates x and y coordinates into a location in the pixels array
+      
       int loc = x + y * (img.width);
       
       dots.add(new Dot(x, y, img.pixels[loc]));

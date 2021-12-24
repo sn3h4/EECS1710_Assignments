@@ -1,0 +1,72 @@
+PImage imgOrig, img;
+ArrayList<Dot> dots;
+int scaler = 10;
+ArrayList<Stroke> strokes;
+int marktime = 0;
+int timeout = 1000;
+
+
+void setup() {
+  size(50, 50, P2D);  
+  img = loadImage("lanterns.jpg");
+  surface.setSize(img.width, img.height);
+  img.loadPixels();
+  dots = new ArrayList<Dot>();
+
+  for (int x = 0; x < img.width; x += scaler) {
+    for (int y = 0; y < img.height; y += scaler) {
+      
+      int loc = x + y * (img.width);
+      
+      dots.add(new Dot(x, y, img.pixels[loc]));
+    }
+  }
+  setupXYscope();
+  
+  strokes = new ArrayList<Stroke>();
+
+}
+
+
+void draw() { 
+    background(127);
+  
+  for (Dot dot : dots) {
+    dot.run();
+  }
+  
+  surface.setTitle("" + frameRate);
+  updateXYscope();
+  
+  for (int i=strokes.size()-1; i >= 0; i--) {
+    Stroke stroke = strokes.get(i);
+    stroke.run();
+    if (!stroke.alive) strokes.remove(i);
+  }
+  
+  if (millis() > marktime + timeout) {
+    xy.clearWaves();
+  }
+
+  surface.setTitle("" + frameRate);
+}
+ 
+
+
+void mouseDragged() {
+  xy.line(mouseX, mouseY, pmouseX, pmouseY);
+  
+  if (strokes.size() > 0) {
+    Stroke stroke = strokes.get(strokes.size()-1);
+    stroke.points.add(new PVector(mouseX, mouseY));
+    stroke.timestamp = millis();
+  }
+
+  marktime = millis();
+}
+
+void keyPressed() {
+  if (keyCode == 1) { // DELETE
+    xy.clearWaves();
+  }
+}
